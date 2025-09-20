@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dietas - Nutriox</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <main class="container">
+    <nav>
+      <a href="dashboard.html">Dashboard</a>
+      <a href="dietas.html" style="font-weight:700; color:#1366d6;">Dietas</a>
+      <a href="recetas.html">Recetas</a>
+      <a href="alimentos.html">Alimentos</a>
+      <a href="profile.html">Perfil</a>
+      <a href="/" class="btn btn-danger">Cerrar sesión</a>
+    </nav>
+
+    <h1>Gestiona tus Dietas</h1>
+    <button id="btn-add-dieta">➕ Añadir Dieta</button>
+
+    <div id="message" class="message"></div>
+
+    <div id="dietas-list" class="dietas-list">
+      <!-- Aquí se cargarán las dietas -->
+    </div>
+
+    <!-- Modal para formulario -->
+    <div id="modal" class="modal" aria-hidden="true" role="dialog" aria-modal="true">
+      <div class="modal-content" role="document">
+        <h2 id="modal-title">Nueva Dieta</h2>
+
+        <form id="dieta-form">
+          <label for="nombre">Nombre</label>
+          <input type="text" id="nombre" name="nombre" placeholder="Nombre de la dieta" required />
+
+          <label for="descripcion">Descripción</label>
+          <textarea id="descripcion" name="descripcion" placeholder="Descripción de la dieta (opcional)"></textarea>
+
+          <label for="calorias">Calorías</label>
+          <input type="number" id="calorias" name="calorias" placeholder="Calorías diarias" required min="0" />
+
+          <div class="modal-buttons">
+            <button type="button" class="btn btn-cancel" id="btn-cancel">Cancelar</button>
+            <button type="submit" class="btn btn-save">Guardar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const dietasList = document.getElementById('dietas-list');
+    const btnAddDieta = document.getElementById('btn-add-dieta');
+    const modal = document.getElementById('modal');
+    const modalTitle = document.getElementById('modal-title');
+    const dietaForm = document.getElementById('dieta-form');
+    const btnCancel = document.getElementById('btn-cancel');
+    const messageEl = document.getElementById('message');
+
+    let editingDietaId = null;
+
+    // Cambia este ID por el ID real del usuario autenticado
+    const usuarioId = 'TU_USUARIO_ID_AQUI';
+
+    function showMessage(msg, type = 'success') {
+      messageEl.textContent = msg;
+      messageEl.className = 'message ' + type;
+      setTimeout(() => {
+        messageEl.textContent = '';
+        messageEl.className = 'message';
+      }, 4000);
+    }
+
+    function openModal(edit = false, dieta = null) {
+      modal.classList.add('active');
+      modal.setAttribute('aria-hidden', 'false');
+      if (edit && dieta) {
+        modalTitle.textContent = 'Editar Dieta';
+        dietaForm.nombre.value = dieta.nombre;
+        dietaForm.descripcion.value = dieta.descripcion || '';
+        dietaForm.calorias.value = dieta.calorias;
+        editingDietaId = dieta._id;
+      } else {
+        modalTitle.textContent = 'Nueva Dieta';
+        dietaForm.reset();
+        editingDietaId = null;
+      }
+    }
+
+    function closeModal() {
+      modal.classList.remove('active');
+      modal.setAttribute('aria-hidden', 'true');
+      dietaForm.reset();
+      editingDietaId = null;
+    }
+
+    async function loadDietas() {
+      try {
+        const res = await fetch(`/api/dietas/usuario/${usuarioId}`);
+        if (!res.ok) throw new Error('Error al cargar dietas');
+        const dietas = await res.json();
+        renderDietas(dietas);
+      } catch (error) {
+        showMessage(error.message, 'error');
+      }
+    }
+
+    function renderDietas(dietas) {
+      dietasList.innerHTML = '';
+      if (dietas.length === 0) {
+        dietasList.innerHTML = '<p>No tienes dietas creadas aún.</p>';
+        return;
+      }
+      dietas.forEach(dieta => {
+        const card = document.createElement('div');
+        card.className = 'dieta-card';
+        card.innerHTML = `
+          <h3>${dieta.nombre}</h3>
+          <p>${dieta.descripcion || 'Sin descripción'}</p>
+          <p class="calorias">Calorías: ${dieta.calorias}</p>
+          <div class="actions">
+            <button class="btn-edit" aria-label="Editar dieta ${dieta.nombre}">✏️ Editar</button>
+            <button class="btn-delete" aria-label="Eliminar dieta ${dieta.nombre}">🗑️ Eliminar</button>
+          </div>
+        `;
+
+        card.querySelector('.btn-edit').addEventListener('click', () => {
+          openModal(true, dieta);
+        });
+
+        card.querySelector('.btn-delete').addEventListener('click', async () => {
+          if (confirm(`¿Seguro que quieres eliminar la dieta "${dieta.nombre}"?`)) {
+            try {
+              const res = await fetch(`/api/dietas/${dieta._id}`, {
+                method: 'DELETE',
+              });
+              if (!res.ok) throw new Error('Error al eliminar');
+              showMessage('Dieta eliminada');
+              loadDietas();
+            } catch (error) {
+              showMessage(error.message, 'error');
+            }
+          }
+        });
+
+        dietasList.appendChild(card);
+      });
+    }
+
+    dietaForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const data = {
+        nombre: dietaForm.nombre.value.trim(),
+        descripcion: dietaForm.descripcion.value.trim(),
+        calorias: Number(dietaForm.calorias.value),
+        usuario: usuarioId,
+      };
+
+      try {
+        let res;
+        if (editingDietaId) {
+          res = await fetch(`/api/dietas/${editingDietaId}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data),
+          });
+        } else {
+          res = await fetch(`/api/dietas`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data),
+          });
+        }
+        if (!res.ok) throw new Error('Error al guardar dieta');
+        showMessage(editingDietaId ? 'Dieta actualizada' : 'Dieta creada');
+        closeModal();
+        loadDietas();
+      } catch (error) {
+        showMessage(error.message, 'error');
+      }
+    });
+
+    btnAddDieta.addEventListener('click', () => openModal());
+    btnCancel.addEventListener('click', closeModal);
+
+    modal.addEventListener('click', e => {
+      if (e.target === modal) closeModal();
+    });
+
+    window.addEventListener('DOMContentLoaded', loadDietas);
+  </script>
+</body>
+</html>

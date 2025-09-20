@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Recetas - Nutriox</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <main class="container">
+    <nav>
+      <a href="dashboard.html">Dashboard</a>
+      <a href="dietas.html">Dietas</a>
+      <a href="recetas.html" style="font-weight:700; color:#1366d6;">Recetas</a>
+      <a href="alimentos.html">Alimentos</a>
+      <a href="profile.html">Perfil</a>
+      <a href="/" class="btn btn-danger">Cerrar sesión</a>
+    </nav>
+
+    <h1>Gestiona tus Recetas</h1>
+    <button id="btn-add-receta">➕ Añadir Receta</button>
+
+    <div id="message" class="message"></div>
+
+    <div id="recetas-list" class="recetas-list">
+      <!-- Aquí se listarán las recetas -->
+    </div>
+
+    <!-- Modal para añadir/editar receta -->
+    <div id="modal" class="modal" aria-hidden="true" role="dialog" aria-modal="true">
+      <div class="modal-content" role="document">
+        <h2 id="modal-title">Nueva Receta</h2>
+
+        <form id="receta-form">
+          <label for="nombre">Nombre de la receta</label>
+          <input type="text" id="nombre" name="nombre" placeholder="Nombre de la receta" required />
+
+          <label for="ingredientes">Ingredientes (separados por coma)</label>
+          <textarea id="ingredientes" name="ingredientes" placeholder="Ej: Tomate, Queso, Lechuga" required></textarea>
+
+          <label for="calorias">Calorías totales</label>
+          <input type="number" id="calorias" name="calorias" placeholder="Calorías" required min="0" />
+
+          <div class="modal-buttons">
+            <button type="button" class="btn btn-cancel" id="btn-cancel">Cancelar</button>
+            <button type="submit" class="btn btn-save">Guardar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const recetasList = document.getElementById('recetas-list');
+    const btnAddReceta = document.getElementById('btn-add-receta');
+    const modal = document.getElementById('modal');
+    const modalTitle = document.getElementById('modal-title');
+    const recetaForm = document.getElementById('receta-form');
+    const btnCancel = document.getElementById('btn-cancel');
+    const messageEl = document.getElementById('message');
+
+    let editingRecetaId = null;
+
+    // Cambia por el ID real del usuario autenticado
+    const usuarioId = 'TU_USUARIO_ID_AQUI';
+
+    function showMessage(msg, type = 'success') {
+      messageEl.textContent = msg;
+      messageEl.className = 'message ' + type;
+      setTimeout(() => {
+        messageEl.textContent = '';
+        messageEl.className = 'message';
+      }, 4000);
+    }
+
+    function openModal(edit = false, receta = null) {
+      modal.classList.add('active');
+      modal.setAttribute('aria-hidden', 'false');
+      if (edit && receta) {
+        modalTitle.textContent = 'Editar Receta';
+        recetaForm.nombre.value = receta.nombre;
+        recetaForm.ingredientes.value = receta.ingredientes.join(', ');
+        recetaForm.calorias.value = receta.calorias;
+        editingRecetaId = receta._id;
+      } else {
+        modalTitle.textContent = 'Nueva Receta';
+        recetaForm.reset();
+        editingRecetaId = null;
+      }
+    }
+
+    function closeModal() {
+      modal.classList.remove('active');
+      modal.setAttribute('aria-hidden', 'true');
+      recetaForm.reset();
+      editingRecetaId = null;
+    }
+
+    async function loadRecetas() {
+      try {
+        const res = await fetch(`/api/recetas/${usuarioId}`);
+        if (!res.ok) throw new Error('Error al cargar recetas');
+        const recetas = await res.json();
+        renderRecetas(recetas);
+      } catch (error) {
+        showMessage(error.message, 'error');
+      }
+    }
+
+    function renderRecetas(recetas) {
+      recetasList.innerHTML = '';
+      if (recetas.length === 0) {
+        recetasList.innerHTML = '<p>No tienes recetas añadidas aún.</p>';
+        return;
+      }
+
+      recetas.forEach(receta => {
+        const card = document.createElement('div');
+        card.className = 'receta-card';
+        card.innerHTML = `
+          <h3>${receta.nombre}</h3>
+          <p><strong>Ingredientes:</strong> ${receta.ingredientes.join(', ')}</p>
+          <p><strong>Calorías:</strong> ${receta.calorias}</p>
+          <div class="actions">
+            <button class="btn-edit" aria-label="Editar receta ${receta.nombre}">✏️ Editar</button>
+            <button class="btn-delete" aria-label="Eliminar receta ${receta.nombre}">🗑️ Eliminar</button>
+          </div>
+        `;
+
+        card.querySelector('.btn-edit').addEventListener('click', () => {
+          openModal(true, receta);
+        });
+
+        card.querySelector('.btn-delete').addEventListener('click', async () => {
+          if (confirm(`¿Seguro que quieres eliminar la receta "${receta.nombre}"?`)) {
+            try {
+              const res = await fetch(`/api/recetas/${receta._id}`, {
+                method: 'DELETE',
+              });
+              if (!res.ok) throw new Error('Error al eliminar');
+              showMessage('Receta eliminada');
+              loadRecetas();
+            } catch (error) {
+              showMessage(error.message, 'error');
+            }
+          }
+        });
+
+        recetasList.appendChild(card);
+      });
+    }
+
+    recetaForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const data = {
+        nombre: recetaForm.nombre.value.trim(),
+        ingredientes: recetaForm.ingredientes.value.split(',').map(i => i.trim()).filter(i => i),
+        calorias: Number(recetaForm.calorias.value),
+        usuarioId: usuarioId,
+      };
+
+      try {
+        let res;
+        if (editingRecetaId) {
+          res = await fetch(`/api/recetas/${editingRecetaId}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data),
+          });
+        } else {
+          res = await fetch('/api/recetas', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data),
+          });
+        }
+        if (!res.ok) throw new Error('Error al guardar receta');
+        showMessage(editingRecetaId ? 'Receta actualizada' : 'Receta creada');
+        closeModal();
+        loadRecetas();
+      } catch (error) {
+        showMessage(error.message, 'error');
+      }
+    });
+
+    btnAddReceta.addEventListener('click', () => openModal());
+    btnCancel.addEventListener('click', closeModal);
+
+    modal.addEventListener('click', e => {
+      if (e.target === modal) closeModal();
+    });
+
+    window.addEventListener('DOMContentLoaded', loadRecetas);
+  </script>
+</body>
+</html>

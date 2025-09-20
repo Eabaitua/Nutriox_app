@@ -1,0 +1,542 @@
+/* RESET BÁSICO */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(135deg, #1f2a44 0%, #395870 60%, #4ca1af 100%);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 50px 15px;
+  color: #ecf0f1;
+  overflow-y: auto;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* CONTENEDOR PRINCIPAL */
+.container {
+  background: rgba(28, 41, 65, 0.95);
+  padding: 45px 55px;
+  border-radius: 20px;
+  box-shadow:
+    0 8px 15px rgba(0, 0, 0, 0.3),
+    0 0 15px 3px rgba(76, 161, 175, 0.5);
+  max-width: 520px;
+  width: 100%;
+  text-align: center;
+  animation: fadeInScale 0.6s ease forwards;
+}
+
+/* ANIMACIÓN CONTENEDOR */
+@keyframes fadeInScale {
+  0% {
+    opacity: 0;
+    transform: scale(0.85);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* NAVEGACIÓN SUPERIOR */
+nav {
+  display: flex;
+  justify-content: space-evenly;
+  margin-bottom: 40px;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+nav a {
+  color: #7ec8d3;
+  text-decoration: none;
+  font-weight: 600;
+  padding: 12px 22px;
+  border-radius: 12px;
+  background: rgba(76, 161, 175, 0.15);
+  box-shadow:
+    inset 0 0 5px rgba(76, 161, 175, 0.4);
+  transition: 
+    background-color 0.4s ease,
+    color 0.4s ease,
+    transform 0.3s ease;
+  user-select: none;
+  position: relative;
+}
+
+nav a::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 12px;
+  box-shadow: 0 0 15px 3px rgba(76, 161, 175, 0);
+  transition: box-shadow 0.4s ease;
+  z-index: -1;
+}
+
+nav a:hover {
+  background-color: #4ca1af;
+  color: #e0f7fa;
+  transform: scale(1.05);
+}
+
+nav a:hover::before {
+  box-shadow: 0 0 15px 6px rgba(76, 161, 175, 0.8);
+  filter: blur(3px);
+}
+
+nav a.btn-danger {
+  background-color: #e74c3c;
+  color: #fbeaea;
+  font-weight: 700;
+  box-shadow:
+    inset 0 0 5px rgba(231, 76, 60, 0.6);
+}
+
+nav a.btn-danger:hover {
+  background-color: #c0392b;
+  box-shadow:
+    0 0 15px 4px rgba(192, 57, 43, 0.85);
+  color: #fff;
+}
+
+/* ENCABEZADOS */
+h1 {
+  font-weight: 800;
+  font-size: 3rem;
+  margin-bottom: 12px;
+  letter-spacing: 1.2px;
+  color: #e3f6f5;
+  text-shadow: 0 0 6px rgba(76, 161, 175, 0.9);
+}
+
+p {
+  font-weight: 400;
+  font-size: 1.15rem;
+  margin-bottom: 38px;
+  color: #a9c7cc;
+  letter-spacing: 0.6px;
+  line-height: 1.5;
+}
+
+/* TABS LOGIN/REGISTER */
+.tabs {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 35px;
+  gap: 25px;
+}
+
+.tab {
+  background: transparent;
+  border: none;
+  color: #7ec8d3;
+  font-weight: 700;
+  font-size: 1.15rem;
+  cursor: pointer;
+  padding-bottom: 8px;
+  border-bottom: 3px solid transparent;
+  transition: 
+    color 0.35s ease,
+    border-color 0.35s ease;
+  user-select: none;
+  position: relative;
+}
+
+.tab::after {
+  content: '';
+  position: absolute;
+  bottom: -3px;
+  left: 50%;
+  width: 0;
+  height: 3px;
+  background-color: #4ca1af;
+  border-radius: 3px;
+  transition: width 0.35s ease, left 0.35s ease;
+  transform: translateX(-50%);
+}
+
+.tab:hover {
+  color: #c1e3e8;
+}
+
+.tab.active {
+  color: #c1e3e8;
+  border-color: transparent;
+}
+
+.tab.active::after {
+  width: 70%;
+  left: 50%;
+}
+
+/* FORMULARIOS */
+.form {
+  display: none;
+  flex-direction: column;
+  gap: 24px;
+  text-align: left;
+  animation: slideUpFade 0.5s ease forwards;
+}
+
+.form.active {
+  display: flex;
+}
+
+@keyframes slideUpFade {
+  0% {
+    opacity: 0;
+    transform: translateY(25px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #a8d0db;
+  font-size: 1rem;
+  user-select: none;
+}
+
+input[type='text'],
+input[type='email'],
+input[type='password'],
+textarea,
+select {
+  width: 100%;
+  padding: 16px 20px;
+  border-radius: 14px;
+  border: none;
+  font-size: 1.1rem;
+  outline: none;
+  background: linear-gradient(145deg, #335566, #2c3e50);
+  color: #e0f2f7;
+  box-shadow:
+    inset 3px 3px 8px rgba(0,0,0,0.8),
+    inset -3px -3px 6px rgba(76,161,175,0.4);
+  font-family: 'Poppins', sans-serif;
+  transition:
+    background-color 0.3s ease,
+    box-shadow 0.3s ease,
+    color 0.3s ease;
+  resize: vertical;
+}
+
+input[type='text']::placeholder,
+input[type='email']::placeholder,
+input[type='password']::placeholder,
+textarea::placeholder {
+  color: #9bb7bf;
+  font-weight: 400;
+  font-style: italic;
+}
+
+input[type='text']:focus,
+input[type='email']:focus,
+input[type='password']:focus,
+textarea:focus,
+select:focus {
+  background: linear-gradient(145deg, #4ca1af, #76c7d3);
+  box-shadow:
+    0 0 12px 3px #4ca1af,
+    inset 3px 3px 8px rgba(0,0,0,0.9);
+  color: #f0f9fa;
+}
+
+/* BOTONES */
+.btn {
+  padding: 15px 28px;
+  background: linear-gradient(135deg, #4ca1af, #1b8f9a);
+  color: #f0f9fa;
+  font-weight: 700;
+  font-size: 1.25rem;
+  border: none;
+  border-radius: 16px;
+  cursor: pointer;
+  box-shadow:
+    0 6px 15px rgba(28, 98, 115, 0.7);
+  transition:
+    background 0.4s ease,
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+  user-select: none;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.4);
+}
+
+.btn:hover,
+.btn:focus {
+  background: linear-gradient(135deg, #3a7e8a, #176b73);
+  transform: translateY(-3px);
+  box-shadow:
+    0 12px 20px rgba(28, 98, 115, 0.9);
+  outline: none;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #27ae60, #1e8449);
+  box-shadow:
+    0 6px 15px rgba(30, 132, 73, 0.7);
+}
+
+.btn-primary:hover,
+.btn-primary:focus {
+  background: linear-gradient(135deg, #1e8449, #196b3c);
+  box-shadow:
+    0 12px 20px rgba(30, 132, 73, 0.9);
+}
+
+/* BOTONES DE BORRAR / ELIMINAR */
+.btn-danger {
+  background: linear-gradient(135deg, #e74c3c, #c0392b);
+  box-shadow:
+    0 6px 15px rgba(192, 57, 43, 0.7);
+}
+
+.btn-danger:hover,
+.btn-danger:focus {
+  background: linear-gradient(135deg, #c0392b, #962d22);
+  box-shadow:
+    0 12px 20px rgba(192, 57, 43, 0.9);
+}
+
+/* MENSAJES DE ERROR Y ÉXITO */
+.message {
+  padding: 15px 20px;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 1.1rem;
+  margin-bottom: 28px;
+  text-align: center;
+  display: none;
+  user-select: none;
+  box-shadow:
+    0 0 8px rgba(0,0,0,0.3);
+  animation: fadeInMessage 0.5s ease forwards;
+}
+
+.message.success {
+  background: linear-gradient(135deg, #27ae60, #2ecc71);
+  color: #e9f7ef;
+  display: block;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.25);
+}
+
+.message.error {
+  background: linear-gradient(135deg, #e74c3c, #c0392b);
+  color: #fbeaea;
+  display: block;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.25);
+}
+
+@keyframes fadeInMessage {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* FORM FOOTER */
+.form-footer {
+  font-size: 1rem;
+  color: #a3c9d7;
+  margin-top: 24px;
+  text-align: center;
+  user-select: none;
+}
+
+.form-footer span {
+  color: #3bd6c8;
+  font-weight: 800;
+  cursor: pointer;
+  text-decoration: underline;
+  transition: color 0.3s ease;
+}
+
+.form-footer span:hover {
+  color: #1b8f89;
+}
+
+/* LISTADOS - DIETAS, RECETAS, ALIMENTOS */
+.list-container {
+  background: rgba(28, 41, 65, 0.98);
+  border-radius: 20px;
+  padding: 30px 35px;
+  box-shadow:
+    0 10px 35px rgba(0, 0, 0, 0.35);
+  color: #d4e6eb;
+  max-width: 600px;
+  margin: 0 auto 40px auto;
+  user-select: none;
+}
+
+.list-container h2 {
+  font-weight: 800;
+  font-size: 2.25rem;
+  margin-bottom: 25px;
+  color: #e3f6f5;
+  text-align: center;
+  letter-spacing: 1.5px;
+  text-shadow: 0 0 10px rgba(76, 161, 175, 0.9);
+}
+
+/* Lista scrollable */
+.list {
+  list-style: none;
+  max-height: 320px;
+  overflow-y: auto;
+  padding-right: 12px;
+  scrollbar-width: thin;
+  scrollbar-color: #4ca1af transparent;
+}
+
+/* Scrollbar para Chrome y Edge */
+.list::-webkit-scrollbar {
+  width: 8px;
+}
+
+.list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.list::-webkit-scrollbar-thumb {
+  background-color: #4ca1af;
+  border-radius: 10px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+
+/* Items lista */
+.list-item {
+  background: linear-gradient(135deg, #334d6e, #2b3e57);
+  border-radius: 14px;
+  margin-bottom: 18px;
+  padding: 20px 25px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: default;
+  box-shadow:
+    inset 2px 2px 6px rgba(255,255,255,0.08),
+    0 4px 10px rgba(0,0,0,0.3);
+  transition: background 0.35s ease, transform 0.3s ease;
+  user-select: text;
+}
+
+.list-item:hover {
+  background: linear-gradient(135deg, #4ca1af, #3a7e8a);
+  transform: translateX(6px);
+  box-shadow:
+    0 10px 20px rgba(76, 161, 175, 0.9);
+}
+
+.list-item .info {
+  max-width: 75%;
+  text-align: left;
+}
+
+.list-item .info h3 {
+  font-weight: 700;
+  font-size: 1.4rem;
+  margin-bottom: 6px;
+  color: #d9f3f9;
+  text-shadow: 0 0 6px rgba(76, 161, 175, 0.8);
+}
+
+.list-item .info p {
+  font-weight: 400;
+  font-size: 1rem;
+  color: #a7bcc7;
+}
+
+/* Botones dentro de la lista */
+.list-item button {
+  background: linear-gradient(135deg, #e74c3c, #c0392b);
+  border: none;
+  border-radius: 14px;
+  color: white;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 12px 18px;
+  font-size: 1.05rem;
+  transition: background 0.4s ease, transform 0.25s ease;
+  user-select: none;
+  box-shadow: 0 5px 10px rgba(192, 57, 43, 0.7);
+}
+
+.list-item button:hover {
+  background: linear-gradient(135deg, #c0392b, #962d22);
+  transform: scale(1.1);
+  box-shadow: 0 10px 15px rgba(192, 57, 43, 0.95);
+}
+
+/* SECCIÓN FORMULARIOS DE DIETAS, RECETAS, ALIMENTOS Y PERFIL */
+.form-section {
+  margin-bottom: 50px;
+  text-align: left;
+  user-select: none;
+}
+
+.form-section h2 {
+  font-weight: 800;
+  font-size: 2.25rem;
+  margin-bottom: 28px;
+  color: #e3f6f5;
+  text-shadow: 0 0 10px rgba(76, 161, 175, 0.9);
+}
+
+/* Formularios dentro de sección */
+.form-section form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.form-section form button {
+  align-self: flex-start;
+}
+
+/* Responsive */
+@media (max-width: 680px) {
+  .container {
+    padding: 30px 35px;
+    max-width: 100%;
+  }
+
+  nav {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .list-container {
+    max-width: 100%;
+    padding: 25px 20px;
+  }
+
+  .list-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .list-item button {
+    align-self: flex-end;
+  }
+}

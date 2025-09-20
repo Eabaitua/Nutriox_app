@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Perfil - Nutriox</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <main class="container">
+    <nav>
+      <a href="dashboard.html">Dashboard</a>
+      <a href="dietas.html">Dietas</a>
+      <a href="recetas.html">Recetas</a>
+      <a href="alimentos.html">Alimentos</a>
+      <a href="profile.html" style="font-weight:700; color:#1366d6;">Perfil</a>
+      <a href="/" class="btn btn-danger">Cerrar sesión</a>
+    </nav>
+
+    <h1>Mi Perfil</h1>
+
+    <div id="message" class="message"></div>
+
+    <form id="profile-form">
+      <label for="nombre">Nombre completo</label>
+      <input type="text" id="nombre" name="nombre" placeholder="Tu nombre" required />
+
+      <label for="email">Correo electrónico</label>
+      <input type="email" id="email" name="email" placeholder="Tu email" required />
+
+      <label for="password">Nueva contraseña</label>
+      <input type="password" id="password" name="password" placeholder="Dejar vacío para no cambiar" />
+
+      <label for="passwordConfirm">Confirmar nueva contraseña</label>
+      <input type="password" id="passwordConfirm" name="passwordConfirm" placeholder="Confirmar contraseña" />
+
+      <button type="submit" class="btn btn-primary">Actualizar perfil</button>
+    </form>
+  </main>
+
+  <script>
+    // Cambia por el ID real del usuario autenticado
+    const usuarioId = 'TU_USUARIO_ID_AQUI';
+
+    const profileForm = document.getElementById('profile-form');
+    const messageEl = document.getElementById('message');
+
+    function showMessage(msg, type = 'success') {
+      messageEl.textContent = msg;
+      messageEl.className = 'message ' + type;
+      setTimeout(() => {
+        messageEl.textContent = '';
+        messageEl.className = 'message';
+      }, 4000);
+    }
+
+    async function loadProfile() {
+      try {
+        const res = await fetch(`/api/auth/${usuarioId}`);
+        if (!res.ok) throw new Error('Error al cargar perfil');
+        const user = await res.json();
+
+        profileForm.nombre.value = user.nombre || '';
+        profileForm.email.value = user.email || '';
+      } catch (error) {
+        showMessage(error.message, 'error');
+      }
+    }
+
+    profileForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const nombre = profileForm.nombre.value.trim();
+      const email = profileForm.email.value.trim();
+      const password = profileForm.password.value;
+      const passwordConfirm = profileForm.passwordConfirm.value;
+
+      if (password !== passwordConfirm) {
+        return showMessage('Las contraseñas no coinciden', 'error');
+      }
+
+      const data = { nombre, email };
+      if (password) {
+        data.password = password;
+      }
+
+      try {
+        const res = await fetch(`/api/auth/${usuarioId}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+
+        if (!res.ok) {
+          const errorData = await res.json();
+          throw new Error(errorData.mensaje || 'Error al actualizar perfil');
+        }
+
+        showMessage('Perfil actualizado correctamente');
+        profileForm.password.value = '';
+        profileForm.passwordConfirm.value = '';
+      } catch (error) {
+        showMessage(error.message, 'error');
+      }
+    });
+
+    window.addEventListener('DOMContentLoaded', loadProfile);
+  </script>
+</body>
+</html>

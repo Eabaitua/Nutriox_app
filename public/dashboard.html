@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Dashboard - Nutriox</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+  <style>
+    main.container {
+      max-width: 900px;
+      margin: 2rem auto;
+      padding: 1rem;
+      text-align: center;
+    }
+    h1 {
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+    }
+    .dashboard-menu {
+      margin: 2rem 0;
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .dashboard-menu a {
+      padding: 1rem 1.5rem;
+      background: #2f80ed;
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+      font-weight: 600;
+      transition: background-color 0.3s ease;
+    }
+    .dashboard-menu a:hover {
+      background: #1366d6;
+    }
+    .summary {
+      margin-top: 2rem;
+      font-size: 1.2rem;
+      color: #333;
+    }
+    .btn-logout {
+      margin-top: 3rem;
+      display: inline-block;
+      background: #eb5757;
+      padding: 0.8rem 1.4rem;
+      border-radius: 8px;
+      color: white;
+      font-weight: 600;
+      text-decoration: none;
+      transition: background-color 0.3s ease;
+    }
+    .btn-logout:hover {
+      background: #c43c3c;
+    }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <h1>Bienvenido a tu Dashboard</h1>
+    <p>Aquí podrás gestionar tus dietas, recetas y perfil.</p>
+
+    <nav class="dashboard-menu" aria-label="Menú principal">
+      <a href="dietas.html">Dietas</a>
+      <a href="recetas.html">Recetas</a>
+      <a href="alimentos.html">Alimentos</a>
+      <a href="profile.html">Perfil</a>
+    </nav>
+
+    <div class="summary">
+      <p><strong>Dietas registradas:</strong> 0</p>
+      <p><strong>Recetas registradas:</strong> 0</p>
+      <!-- Aquí luego se puede cargar dinámicamente con JS -->
+    </div>
+
+    <a href="/" class="btn-logout">Cerrar sesión</a>
+  </main>
+</body>
+</html>
