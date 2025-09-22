@@ -9,13 +9,13 @@
 
 body {
   font-family: 'Poppins', sans-serif;
-  background: linear-gradient(135deg, #1f2a44 0%, #395870 60%, #4ca1af 100%);
+  background: linear-gradient(135deg, #d9ead3 0%, #b7cbbf 60%, #a6b89c 100%);
   min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: flex-start;
   padding: 50px 15px;
-  color: #ecf0f1;
+  color: #3a4a3f;
   overflow-y: auto;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -23,12 +23,12 @@ body {
 
 /* CONTENEDOR PRINCIPAL */
 .container {
-  background: rgba(28, 41, 65, 0.95);
+  background: rgba(234, 237, 228, 0.95);
   padding: 45px 55px;
   border-radius: 20px;
   box-shadow:
-    0 8px 15px rgba(0, 0, 0, 0.3),
-    0 0 15px 3px rgba(76, 161, 175, 0.5);
+    0 8px 15px rgba(0, 0, 0, 0.1),
+    0 0 15px 3px rgba(156, 179, 149, 0.5);
   max-width: 520px;
   width: 100%;
   text-align: center;
@@ -57,14 +57,14 @@ nav {
 }
 
 nav a {
-  color: #7ec8d3;
+  color: #729c71;
   text-decoration: none;
   font-weight: 600;
   padding: 12px 22px;
   border-radius: 12px;
-  background: rgba(76, 161, 175, 0.15);
+  background: rgba(156, 179, 149, 0.15);
   box-shadow:
-    inset 0 0 5px rgba(76, 161, 175, 0.4);
+    inset 0 0 5px rgba(156, 179, 149, 0.4);
   transition: 
     background-color 0.4s ease,
     color 0.4s ease,
@@ -78,34 +78,34 @@ nav a::before {
   position: absolute;
   inset: 0;
   border-radius: 12px;
-  box-shadow: 0 0 15px 3px rgba(76, 161, 175, 0);
+  box-shadow: 0 0 15px 3px rgba(156, 179, 149, 0);
   transition: box-shadow 0.4s ease;
   z-index: -1;
 }
 
 nav a:hover {
-  background-color: #4ca1af;
-  color: #e0f7fa;
+  background-color: #a2b89b;
+  color: #f0f5ec;
   transform: scale(1.05);
 }
 
 nav a:hover::before {
-  box-shadow: 0 0 15px 6px rgba(76, 161, 175, 0.8);
+  box-shadow: 0 0 15px 6px rgba(156, 179, 149, 0.8);
   filter: blur(3px);
 }
 
 nav a.btn-danger {
-  background-color: #e74c3c;
-  color: #fbeaea;
+  background-color: #b1c8a9;
+  color: #f7f9f2;
   font-weight: 700;
   box-shadow:
-    inset 0 0 5px rgba(231, 76, 60, 0.6);
+    inset 0 0 5px rgba(130, 157, 112, 0.6);
 }
 
 nav a.btn-danger:hover {
-  background-color: #c0392b;
+  background-color: #8fa77b;
   box-shadow:
-    0 0 15px 4px rgba(192, 57, 43, 0.85);
+    0 0 15px 4px rgba(130, 157, 112, 0.85);
   color: #fff;
 }
 
@@ -115,15 +115,15 @@ h1 {
   font-size: 3rem;
   margin-bottom: 12px;
   letter-spacing: 1.2px;
-  color: #e3f6f5;
-  text-shadow: 0 0 6px rgba(76, 161, 175, 0.9);
+  color: #556b47;
+  text-shadow: 0 0 6px rgba(156, 179, 149, 0.9);
 }
 
 p {
   font-weight: 400;
   font-size: 1.15rem;
   margin-bottom: 38px;
-  color: #a9c7cc;
+  color: #7f8c6d;
   letter-spacing: 0.6px;
   line-height: 1.5;
 }
@@ -139,7 +139,7 @@ p {
 .tab {
   background: transparent;
   border: none;
-  color: #7ec8d3;
+  color: #729c71;
   font-weight: 700;
   font-size: 1.15rem;
   cursor: pointer;
@@ -159,18 +159,18 @@ p {
   left: 50%;
   width: 0;
   height: 3px;
-  background-color: #4ca1af;
+  background-color: #a2b89b;
   border-radius: 3px;
   transition: width 0.35s ease, left 0.35s ease;
   transform: translateX(-50%);
 }
 
 .tab:hover {
-  color: #c1e3e8;
+  color: #becfbc;
 }
 
 .tab.active {
-  color: #c1e3e8;
+  color: #becfbc;
   border-color: transparent;
 }
 
@@ -207,7 +207,7 @@ label {
   display: block;
   margin-bottom: 8px;
   font-weight: 600;
-  color: #a8d0db;
+  color: #8e9a7e;
   font-size: 1rem;
   user-select: none;
 }
@@ -223,11 +223,11 @@ select {
   border: none;
   font-size: 1.1rem;
   outline: none;
-  background: linear-gradient(145deg, #335566, #2c3e50);
-  color: #e0f2f7;
+  background: linear-gradient(145deg, #dbe4d1, #c2cbb7);
+  color: #4b5a3a;
   box-shadow:
-    inset 3px 3px 8px rgba(0,0,0,0.8),
-    inset -3px -3px 6px rgba(76,161,175,0.4);
+    inset 3px 3px 8px rgba(255,255,255,0.8),
+    inset -3px -3px 6px rgba(155, 182, 146, 0.4);
   font-family: 'Poppins', sans-serif;
   transition:
     background-color 0.3s ease,
@@ -240,7 +240,7 @@ input[type='text']::placeholder,
 input[type='email']::placeholder,
 input[type='password']::placeholder,
 textarea::placeholder {
-  color: #9bb7bf;
+  color: #9aa689;
   font-weight: 400;
   font-style: italic;
 }
@@ -250,67 +250,67 @@ input[type='email']:focus,
 input[type='password']:focus,
 textarea:focus,
 select:focus {
-  background: linear-gradient(145deg, #4ca1af, #76c7d3);
+  background: linear-gradient(145deg, #a2b89b, #becfbc);
   box-shadow:
-    0 0 12px 3px #4ca1af,
-    inset 3px 3px 8px rgba(0,0,0,0.9);
-  color: #f0f9fa;
+    0 0 12px 3px #a2b89b,
+    inset 3px 3px 8px rgba(255,255,255,0.9);
+  color: #2f3b1f;
 }
 
 /* BOTONES */
 .btn {
   padding: 15px 28px;
-  background: linear-gradient(135deg, #4ca1af, #1b8f9a);
-  color: #f0f9fa;
+  background: linear-gradient(135deg, #a2b89b, #7f8c6d);
+  color: #f0f5ec;
   font-weight: 700;
   font-size: 1.25rem;
   border: none;
   border-radius: 16px;
   cursor: pointer;
   box-shadow:
-    0 6px 15px rgba(28, 98, 115, 0.7);
+    0 6px 15px rgba(90, 110, 70, 0.7);
   transition:
     background 0.4s ease,
     transform 0.3s ease,
     box-shadow 0.3s ease;
   user-select: none;
-  text-shadow: 0 1px 3px rgba(0,0,0,0.4);
+  text-shadow: 0 1px 3px rgba(0,0,0,0.2);
 }
 
 .btn:hover,
 .btn:focus {
-  background: linear-gradient(135deg, #3a7e8a, #176b73);
+  background: linear-gradient(135deg, #7f8c6d, #5c6847);
   transform: translateY(-3px);
   box-shadow:
-    0 12px 20px rgba(28, 98, 115, 0.9);
+    0 12px 20px rgba(90, 110, 70, 0.9);
   outline: none;
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #27ae60, #1e8449);
+  background: linear-gradient(135deg, #8aa35a, #5f7033);
   box-shadow:
-    0 6px 15px rgba(30, 132, 73, 0.7);
+    0 6px 15px rgba(95, 112, 51, 0.7);
 }
 
 .btn-primary:hover,
 .btn-primary:focus {
-  background: linear-gradient(135deg, #1e8449, #196b3c);
+  background: linear-gradient(135deg, #5f7033, #41511f);
   box-shadow:
-    0 12px 20px rgba(30, 132, 73, 0.9);
+    0 12px 20px rgba(95, 112, 51, 0.9);
 }
 
 /* BOTONES DE BORRAR / ELIMINAR */
 .btn-danger {
-  background: linear-gradient(135deg, #e74c3c, #c0392b);
+  background: linear-gradient(135deg, #a6b89c, #7f8c6d);
   box-shadow:
-    0 6px 15px rgba(192, 57, 43, 0.7);
+    0 6px 15px rgba(90, 110, 70, 0.7);
 }
 
 .btn-danger:hover,
 .btn-danger:focus {
-  background: linear-gradient(135deg, #c0392b, #962d22);
+  background: linear-gradient(135deg, #7f8c6d, #5c6847);
   box-shadow:
-    0 12px 20px rgba(192, 57, 43, 0.9);
+    0 12px 20px rgba(90, 110, 70, 0.9);
 }
 
 /* MENSAJES DE ERROR Y ÉXITO */
@@ -324,22 +324,22 @@ select:focus {
   display: none;
   user-select: none;
   box-shadow:
-    0 0 8px rgba(0,0,0,0.3);
+    0 0 8px rgba(0,0,0,0.1);
   animation: fadeInMessage 0.5s ease forwards;
 }
 
 .message.success {
-  background: linear-gradient(135deg, #27ae60, #2ecc71);
-  color: #e9f7ef;
+  background: linear-gradient(135deg, #8aa35a, #b7cbbf);
+  color: #f0f5ec;
   display: block;
-  text-shadow: 0 1px 2px rgba(0,0,0,0.25);
+  text-shadow: 0 1px 2px rgba(0,0,0,0.1);
 }
 
 .message.error {
-  background: linear-gradient(135deg, #e74c3c, #c0392b);
-  color: #fbeaea;
+  background: linear-gradient(135deg, #c3c9b6, #a6b89c);
+  color: #4b5a3a;
   display: block;
-  text-shadow: 0 1px 2px rgba(0,0,0,0.25);
+  text-shadow: 0 1px 2px rgba(0,0,0,0.1);
 }
 
 @keyframes fadeInMessage {
@@ -356,14 +356,14 @@ select:focus {
 /* FORM FOOTER */
 .form-footer {
   font-size: 1rem;
-  color: #a3c9d7;
+  color: #7f8c6d;
   margin-top: 24px;
   text-align: center;
   user-select: none;
 }
 
 .form-footer span {
-  color: #3bd6c8;
+  color: #a2b89b;
   font-weight: 800;
   cursor: pointer;
   text-decoration: underline;
@@ -371,17 +371,17 @@ select:focus {
 }
 
 .form-footer span:hover {
-  color: #1b8f89;
+  color: #5c6847;
 }
 
 /* LISTADOS - DIETAS, RECETAS, ALIMENTOS */
 .list-container {
-  background: rgba(28, 41, 65, 0.98);
+  background: rgba(234, 237, 228, 0.98);
   border-radius: 20px;
   padding: 30px 35px;
   box-shadow:
-    0 10px 35px rgba(0, 0, 0, 0.35);
-  color: #d4e6eb;
+    0 10px 35px rgba(0, 0, 0, 0.1);
+  color: #556b47;
   max-width: 600px;
   margin: 0 auto 40px auto;
   user-select: none;
@@ -391,10 +391,10 @@ select:focus {
   font-weight: 800;
   font-size: 2.25rem;
   margin-bottom: 25px;
-  color: #e3f6f5;
+  color: #556b47;
   text-align: center;
   letter-spacing: 1.5px;
-  text-shadow: 0 0 10px rgba(76, 161, 175, 0.9);
+  text-shadow: 0 0 10px rgba(156, 179, 149, 0.7);
 }
 
 /* Lista scrollable */
@@ -404,7 +404,7 @@ select:focus {
   overflow-y: auto;
   padding-right: 12px;
   scrollbar-width: thin;
-  scrollbar-color: #4ca1af transparent;
+  scrollbar-color: #a2b89b transparent;
 }
 
 /* Scrollbar para Chrome y Edge */
@@ -417,7 +417,7 @@ select:focus {
 }
 
 .list::-webkit-scrollbar-thumb {
-  background-color: #4ca1af;
+  background-color: #a2b89b;
   border-radius: 10px;
   border: 2px solid transparent;
   background-clip: content-box;
@@ -425,7 +425,7 @@ select:focus {
 
 /* Items lista */
 .list-item {
-  background: linear-gradient(135deg, #334d6e, #2b3e57);
+  background: linear-gradient(135deg, #d9ead3, #becfbc);
   border-radius: 14px;
   margin-bottom: 18px;
   padding: 20px 25px;
@@ -434,17 +434,17 @@ select:focus {
   align-items: center;
   cursor: default;
   box-shadow:
-    inset 2px 2px 6px rgba(255,255,255,0.08),
-    0 4px 10px rgba(0,0,0,0.3);
+    inset 2px 2px 6px rgba(255,255,255,0.3),
+    0 4px 10px rgba(0,0,0,0.1);
   transition: background 0.35s ease, transform 0.3s ease;
   user-select: text;
 }
 
 .list-item:hover {
-  background: linear-gradient(135deg, #4ca1af, #3a7e8a);
+  background: linear-gradient(135deg, #a2b89b, #7f8c6d);
   transform: translateX(6px);
   box-shadow:
-    0 10px 20px rgba(76, 161, 175, 0.9);
+    0 10px 20px rgba(156, 179, 149, 0.6);
 }
 
 .list-item .info {
@@ -456,19 +456,19 @@ select:focus {
   font-weight: 700;
   font-size: 1.4rem;
   margin-bottom: 6px;
-  color: #d9f3f9;
-  text-shadow: 0 0 6px rgba(76, 161, 175, 0.8);
+  color: #556b47;
+  text-shadow: 0 0 6px rgba(156, 179, 149, 0.6);
 }
 
 .list-item .info p {
   font-weight: 400;
   font-size: 1rem;
-  color: #a7bcc7;
+  color: #7f8c6d;
 }
 
 /* Botones dentro de la lista */
 .list-item button {
-  background: linear-gradient(135deg, #e74c3c, #c0392b);
+  background: linear-gradient(135deg, #a2b89b, #7f8c6d);
   border: none;
   border-radius: 14px;
   color: white;
@@ -478,13 +478,13 @@ select:focus {
   font-size: 1.05rem;
   transition: background 0.4s ease, transform 0.25s ease;
   user-select: none;
-  box-shadow: 0 5px 10px rgba(192, 57, 43, 0.7);
+  box-shadow: 0 5px 10px rgba(90, 110, 70, 0.7);
 }
 
 .list-item button:hover {
-  background: linear-gradient(135deg, #c0392b, #962d22);
+  background: linear-gradient(135deg, #7f8c6d, #5c6847);
   transform: scale(1.1);
-  box-shadow: 0 10px 15px rgba(192, 57, 43, 0.95);
+  box-shadow: 0 10px 15px rgba(90, 110, 70, 0.95);
 }
 
 /* SECCIÓN FORMULARIOS DE DIETAS, RECETAS, ALIMENTOS Y PERFIL */
@@ -498,8 +498,8 @@ select:focus {
   font-weight: 800;
   font-size: 2.25rem;
   margin-bottom: 28px;
-  color: #e3f6f5;
-  text-shadow: 0 0 10px rgba(76, 161, 175, 0.9);
+  color: #556b47;
+  text-shadow: 0 0 10px rgba(156, 179, 149, 0.7);
 }
 
 /* Formularios dentro de sección */
@@ -533,10 +533,10 @@ select:focus {
   .list-item {
     flex-direction: column;
     align-items: flex-start;
-    gap: 12px;
+    gap: 10px;
   }
 
   .list-item button {
-    align-self: flex-end;
+    width: 100%;
   }
 }

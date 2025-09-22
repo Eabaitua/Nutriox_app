@@ -1,43 +1,62 @@
 const express = require('express');
 const router = express.Router();
+const { body, param, validationResult } = require('express-validator');
 
 const Dieta = require('../models/Dieta');
-const User = require('../models/User'); // Por si lo necesitas más adelante
+
+// Middleware para validar creación de dieta
+const validarCrearDieta = [
+  body('nombre').notEmpty().withMessage('El nombre es obligatorio'),
+  body('calorias').isNumeric().withMessage('Calorías debe ser un número'),
+  body('usuarioId').notEmpty().withMessage('El ID de usuario es obligatorio'),
+];
+
+// Middleware para validar receta en dieta
+const validarReceta = [
+  body('recetaId').notEmpty().withMessage('Falta el ID de la receta'),
+];
+
+// Middleware para validar parámetros de ruta
+const validarId = [
+  param('usuarioId').notEmpty().withMessage('ID de usuario es obligatorio'),
+];
 
 // Crear una dieta nueva
-router.post('/', async (req, res) => {
-  const { nombre, descripcion, calorias, usuarioId } = req.body;
+router.post('/', validarCrearDieta, async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) return res.status(400).json({ errores: errors.array() });
 
-  if (!nombre || !calorias || !usuarioId) {
-    return res.status(400).json({ mensaje: 'Faltan campos obligatorios.' });
-  }
+  const { nombre, descripcion, calorias, usuarioId } = req.body;
 
   try {
     const nuevaDieta = new Dieta({
       nombre,
       descripcion,
       calorias,
-      usuario: usuarioId
+      usuario: usuarioId,
     });
 
     const dietaGuardada = await nuevaDieta.save();
-    res.status(201).json(dietaGuardada);
+    res.status(201).json({ success: true, data: dietaGuardada, mensaje: 'Dieta creada correctamente.' });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ mensaje: 'Error al crear la dieta.' });
+    res.status(500).json({ success: false, mensaje: 'Error al crear la dieta.' });
   }
 });
 
 // Obtener todas las dietas de un usuario
-router.get('/:usuarioId', async (req, res) => {
+router.get('/:usuarioId', validarId, async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) return res.status(400).json({ errores: errors.array() });
+
   const { usuarioId } = req.params;
 
   try {
     const dietas = await Dieta.find({ usuario: usuarioId });
-    res.json(dietas);
+    res.json({ success: true, data: dietas });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ mensaje: 'Error al obtener las dietas.' });
+    res.status(500).json({ success: false, mensaje: 'Error al obtener las dietas.' });
   }
 });
 
@@ -47,62 +66,53 @@ router.delete('/:id', async (req, res) => {
 
   try {
     const dieta = await Dieta.findByIdAndDelete(id);
-    if (!dieta) {
-      return res.status(404).json({ mensaje: 'Dieta no encontrada.' });
-    }
+    if (!dieta) return res.status(404).json({ success: false, mensaje: 'Dieta no encontrada.' });
 
-    res.json({ mensaje: 'Dieta eliminada correctamente.' });
+    res.json({ success: true, mensaje: 'Dieta eliminada correctamente.' });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ mensaje: 'Error al eliminar la dieta.' });
+    res.status(500).json({ success: false, mensaje: 'Error al eliminar la dieta.' });
   }
 });
 
+// Añadir una receta a una dieta
+router.post('/:dietaId/recetas', validarReceta, async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) return res.status(400).json({ errores: errors.array() });
 
-// ✅ Añadir una receta a una dieta
-router.post('/:dietaId/recetas', async (req, res) => {
   const { dietaId } = req.params;
   const { recetaId } = req.body;
 
-  if (!recetaId) {
-    return res.status(400).json({ mensaje: 'Falta el ID de la receta.' });
-  }
-
   try {
     const dieta = await Dieta.findById(dietaId);
-    if (!dieta) {
-      return res.status(404).json({ mensaje: 'Dieta no encontrada.' });
-    }
+    if (!dieta) return res.status(404).json({ success: false, mensaje: 'Dieta no encontrada.' });
 
     if (dieta.recetas.includes(recetaId)) {
-      return res.status(400).json({ mensaje: 'La receta ya está en la dieta.' });
+      return res.status(400).json({ success: false, mensaje: 'La receta ya está en la dieta.' });
     }
 
     dieta.recetas.push(recetaId);
     await dieta.save();
 
-    res.status(200).json({ mensaje: 'Receta añadida a la dieta correctamente.', dieta });
+    res.status(200).json({ success: true, mensaje: 'Receta añadida a la dieta correctamente.', data: dieta });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ mensaje: 'Error al añadir la receta a la dieta.' });
+    res.status(500).json({ success: false, mensaje: 'Error al añadir la receta a la dieta.' });
   }
 });
 
-
-// ✅ Obtener una dieta con sus recetas (populate)
+// Obtener una dieta con sus recetas (populate)
 router.get('/:id/completa', async (req, res) => {
   const { id } = req.params;
 
   try {
     const dieta = await Dieta.findById(id).populate('recetas');
-    if (!dieta) {
-      return res.status(404).json({ mensaje: 'Dieta no encontrada.' });
-    }
+    if (!dieta) return res.status(404).json({ success: false, mensaje: 'Dieta no encontrada.' });
 
-    res.json(dieta);
+    res.json({ success: true, data: dieta });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ mensaje: 'Error al obtener la dieta.' });
+    res.status(500).json({ success: false, mensaje: 'Error al obtener la dieta.' });
   }
 });
 

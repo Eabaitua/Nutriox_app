@@ -1,209 +1,170 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Alimentos - Nutriox</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="css/styles.css" />
-</head>
-<body>
-  <main class="container">
-    <nav>
-      <a href="dashboard.html">Dashboard</a>
-      <a href="dietas.html">Dietas</a>
-      <a href="recetas.html">Recetas</a>
-      <a href="alimentos.html" style="font-weight:700; color:#1366d6;">Alimentos</a>
-      <a href="profile.html">Perfil</a>
-      <a href="/" class="btn btn-danger">Cerrar sesión</a>
-    </nav>
+<!-- Añade este input arriba del botón "Añadir Alimento" -->
+<label for="search-food">Buscar alimento en base de datos pública</label>
+<input type="text" id="search-food" placeholder="Escribe para buscar alimentos..." autocomplete="off" />
 
-    <h1>Gestiona tus Alimentos</h1>
-    <button id="btn-add-alimento">➕ Añadir Alimento</button>
+<div id="search-results" class="search-results"></div>
 
-    <div id="message" class="message"></div>
+<button id="btn-add-alimento">➕ Añadir Alimento Manualmente</button>
 
-    <div id="alimentos-list" class="alimentos-list">
-      <!-- Aquí se mostrarán los alimentos -->
-    </div>
+<!-- Caja tabla alimentos añadidos -->
+<section id="alimentos-agregados" aria-label="Alimentos añadidos" style="max-width:700px; margin-top: 2rem; font-family: 'Poppins', sans-serif; color:#27ae60; background:#e6f2ea; border-radius: 12px; padding: 1rem 1.5rem; box-shadow: 0 4px 8px rgba(39,174,96,0.1);">
+  <h2 style="font-weight:600; margin-bottom:1rem;">Alimentos Añadidos</h2>
+  <table style="width:100%; border-collapse: collapse;">
+    <thead>
+      <tr style="background-color:#27ae60; color:#fff; font-weight:600;">
+        <th style="padding:0.7rem 1rem; text-align:left;">Alimento</th>
+        <th style="padding:0.7rem 1rem; text-align:left;">Cantidad (g)</th>
+        <th style="padding:0.7rem 1rem; text-align:left;">Calorías (kcal)</th>
+      </tr>
+    </thead>
+    <tbody id="alimentos-table-body">
+      <!-- Se llenará dinámicamente -->
+    </tbody>
+    <tfoot>
+      <tr>
+        <td colspan="2" style="text-align:right; font-weight:600; padding:0.7rem 1rem;">Total Calorías:</td>
+        <td id="total-calorias" style="padding:0.7rem 1rem; font-weight:700; color:#145214;">0</td>
+      </tr>
+    </tfoot>
+  </table>
+</section>
 
-    <!-- Modal para formulario -->
-    <div id="modal" class="modal" aria-hidden="true" role="dialog" aria-modal="true">
-      <div class="modal-content" role="document">
-        <h2 id="modal-title">Nuevo Alimento</h2>
+<script>
+  const searchFoodInput = document.getElementById('search-food');
+  const searchResultsDiv = document.getElementById('search-results');
+  const alimentosTableBody = document.getElementById('alimentos-table-body');
+  const totalCaloriasCell = document.getElementById('total-calorias');
 
-        <form id="alimento-form">
-          <label for="nombre">Nombre</label>
-          <input type="text" id="nombre" name="nombre" placeholder="Nombre del alimento" required />
+  let alimentosAgregados = [];
+  let resultadosBusquedaActuales = [];
 
-          <label for="calorias">Calorías (por porción)</label>
-          <input type="number" id="calorias" name="calorias" placeholder="Calorías" required min="0" />
-
-          <label for="proteinas">Proteínas (g)</label>
-          <input type="number" id="proteinas" name="proteinas" placeholder="Proteínas" min="0" step="0.1" />
-
-          <label for="grasas">Grasas (g)</label>
-          <input type="number" id="grasas" name="grasas" placeholder="Grasas" min="0" step="0.1" />
-
-          <label for="carbohidratos">Carbohidratos (g)</label>
-          <input type="number" id="carbohidratos" name="carbohidratos" placeholder="Carbohidratos" min="0" step="0.1" />
-
-          <div class="modal-buttons">
-            <button type="button" class="btn btn-cancel" id="btn-cancel">Cancelar</button>
-            <button type="submit" class="btn btn-save">Guardar</button>
-          </div>
-        </form>
-      </div>
-    </div>
-  </main>
-
-  <script>
-    const alimentosList = document.getElementById('alimentos-list');
-    const btnAddAlimento = document.getElementById('btn-add-alimento');
-    const modal = document.getElementById('modal');
-    const modalTitle = document.getElementById('modal-title');
-    const alimentoForm = document.getElementById('alimento-form');
-    const btnCancel = document.getElementById('btn-cancel');
-    const messageEl = document.getElementById('message');
-
-    let editingAlimentoId = null;
-
-    // Cambia este ID por el ID real del usuario autenticado
-    const usuarioId = 'TU_USUARIO_ID_AQUI';
-
-    function showMessage(msg, type = 'success') {
-      messageEl.textContent = msg;
-      messageEl.className = 'message ' + type;
-      setTimeout(() => {
-        messageEl.textContent = '';
-        messageEl.className = 'message';
-      }, 4000);
+  async function buscarAlimentos(query) {
+    if (!query || query.length < 3) {
+      searchResultsDiv.innerHTML = '';
+      resultadosBusquedaActuales = [];
+      return;
     }
 
-    function openModal(edit = false, alimento = null) {
-      modal.classList.add('active');
-      modal.setAttribute('aria-hidden', 'false');
-      if (edit && alimento) {
-        modalTitle.textContent = 'Editar Alimento';
-        alimentoForm.nombre.value = alimento.nombre;
-        alimentoForm.calorias.value = alimento.calorias;
-        alimentoForm.proteinas.value = alimento.proteinas || '';
-        alimentoForm.grasas.value = alimento.grasas || '';
-        alimentoForm.carbohidratos.value = alimento.carbohidratos || '';
-        editingAlimentoId = alimento._id;
-      } else {
-        modalTitle.textContent = 'Nuevo Alimento';
-        alimentoForm.reset();
-        editingAlimentoId = null;
-      }
+    try {
+      const res = await fetch(`https://world.openfoodfacts.org/cgi/search.pl?search_terms=${encodeURIComponent(query)}&search_simple=1&action=process&json=1&page_size=10`);
+      if (!res.ok) throw new Error('Error al buscar alimentos');
+      const data = await res.json();
+
+      resultadosBusquedaActuales = data.products || [];
+      mostrarResultadosBusqueda(resultadosBusquedaActuales);
+    } catch (error) {
+      console.error(error);
+      searchResultsDiv.innerHTML = '<p>Error al buscar alimentos</p>';
+      resultadosBusquedaActuales = [];
+    }
+  }
+
+  function mostrarResultadosBusqueda(alimentos) {
+    if (alimentos.length === 0) {
+      searchResultsDiv.innerHTML = '<p>No se encontraron alimentos</p>';
+      return;
     }
 
-    function closeModal() {
-      modal.classList.remove('active');
-      modal.setAttribute('aria-hidden', 'true');
-      alimentoForm.reset();
-      editingAlimentoId = null;
-    }
+    searchResultsDiv.innerHTML = alimentos.map(alimento => {
+      const nombre = alimento.product_name || alimento.generic_name || 'Sin nombre';
+      const calorias = alimento.nutriments?.energy_kcal_100g || 'N/D';
+      const proteinas = alimento.nutriments?.proteins_100g || 0;
+      const grasas = alimento.nutriments?.fat_100g || 0;
+      const carbohidratos = alimento.nutriments?.carbohydrates_100g || 0;
 
-    async function loadAlimentos() {
-      try {
-        const res = await fetch(`/api/alimentos/${usuarioId}`);
-        if (!res.ok) throw new Error('Error al cargar alimentos');
-        const alimentos = await res.json();
-        renderAlimentos(alimentos);
-      } catch (error) {
-        showMessage(error.message, 'error');
-      }
-    }
+      return `
+        <div class="search-result-item" tabindex="0" role="button" aria-label="Agregar alimento ${nombre}">
+          <strong>${nombre}</strong><br />
+          Calorías: ${calorias} kcal por 100g<br />
+          Proteínas: ${proteinas} g, Grasas: ${grasas} g, Carbohidratos: ${carbohidratos} g
+        </div>
+      `;
+    }).join('');
 
-    function renderAlimentos(alimentos) {
-      alimentosList.innerHTML = '';
-      if (alimentos.length === 0) {
-        alimentosList.innerHTML = '<p>No tienes alimentos añadidos aún.</p>';
-        return;
-      }
-      alimentos.forEach(alimento => {
-        const card = document.createElement('div');
-        card.className = 'alimento-card';
-        card.innerHTML = `
-          <h3>${alimento.nombre}</h3>
-          <p>Calorías: ${alimento.calorias}</p>
-          <p>Proteínas: ${alimento.proteinas || 0} g</p>
-          <p>Grasas: ${alimento.grasas || 0} g</p>
-          <p>Carbohidratos: ${alimento.carbohidratos || 0} g</p>
-          <div class="actions">
-            <button class="btn-edit" aria-label="Editar alimento ${alimento.nombre}">✏️ Editar</button>
-            <button class="btn-delete" aria-label="Eliminar alimento ${alimento.nombre}">🗑️ Eliminar</button>
-          </div>
-        `;
-
-        card.querySelector('.btn-edit').addEventListener('click', () => {
-          openModal(true, alimento);
-        });
-
-        card.querySelector('.btn-delete').addEventListener('click', async () => {
-          if (confirm(`¿Seguro que quieres eliminar el alimento "${alimento.nombre}"?`)) {
-            try {
-              const res = await fetch(`/api/alimentos/${alimento._id}`, {
-                method: 'DELETE',
-              });
-              if (!res.ok) throw new Error('Error al eliminar');
-              showMessage('Alimento eliminado');
-              loadAlimentos();
-            } catch (error) {
-              showMessage(error.message, 'error');
-            }
-          }
-        });
-
-        alimentosList.appendChild(card);
+    // Añadimos event listeners a cada resultado (usando closure index)
+    Array.from(searchResultsDiv.children).forEach((item, index) => {
+      item.addEventListener('click', () => {
+        const seleccionado = resultadosBusquedaActuales[index];
+        agregarAlimentoSeleccionado(seleccionado);
       });
+      item.addEventListener('keydown', e => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          const seleccionado = resultadosBusquedaActuales[index];
+          agregarAlimentoSeleccionado(seleccionado);
+        }
+      });
+    });
+  }
+
+  function agregarAlimentoSeleccionado(alimento) {
+    if (!alimento) return;
+    const nombre = alimento.product_name || alimento.generic_name || 'Sin nombre';
+    const caloriasPor100g = alimento.nutriments?.energy_kcal_100g || 0;
+
+    let cantidad = prompt(`¿Cuántos gramos de "${nombre}" quieres agregar?`, "100");
+    if (!cantidad) return;
+    cantidad = parseFloat(cantidad);
+    if (isNaN(cantidad) || cantidad <= 0) {
+      alert("Por favor ingresa una cantidad válida en gramos.");
+      return;
     }
 
-    alimentoForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
+    const caloriasTotales = (caloriasPor100g * cantidad) / 100;
 
-      const data = {
-        nombre: alimentoForm.nombre.value.trim(),
-        calorias: Number(alimentoForm.calorias.value),
-        proteinas: Number(alimentoForm.proteinas.value) || 0,
-        grasas: Number(alimentoForm.grasas.value) || 0,
-        carbohidratos: Number(alimentoForm.carbohidratos.value) || 0,
-        usuario: usuarioId,
-      };
-
-      try {
-        let res;
-        if (editingAlimentoId) {
-          res = await fetch(`/api/alimentos/${editingAlimentoId}`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data),
-          });
-        } else {
-          res = await fetch(`/api/alimentos`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data),
-          });
-        }
-        if (!res.ok) throw new Error('Error al guardar alimento');
-        showMessage(editingAlimentoId ? 'Alimento actualizado' : 'Alimento creado');
-        closeModal();
-        loadAlimentos();
-      } catch (error) {
-        showMessage(error.message, 'error');
-      }
+    alimentosAgregados.push({
+      nombre,
+      cantidad,
+      calorias: caloriasTotales
     });
 
-    btnAddAlimento.addEventListener('click', () => openModal());
-    btnCancel.addEventListener('click', closeModal);
+    actualizarTablaAlimentos();
 
-    modal.addEventListener('click', e => {
-      if (e.target === modal) closeModal();
-    });
+    // Limpiamos búsqueda para mejor UX
+    searchFoodInput.value = '';
+    searchResultsDiv.innerHTML = '';
+  }
 
-    window.addEventListener('DOMContentLoaded', loadAlimentos);
-  </script>
-</body>
-</html>
+  function actualizarTablaAlimentos() {
+    alimentosTableBody.innerHTML = alimentosAgregados.map(({ nombre, cantidad, calorias }) => `
+      <tr>
+        <td style="padding:0.7rem 1rem;">${nombre}</td>
+        <td style="padding:0.7rem 1rem;">${cantidad.toFixed(1)} g</td>
+        <td style="padding:0.7rem 1rem;">${calorias.toFixed(1)}</td>
+      </tr>
+    `).join('');
+
+    const total = alimentosAgregados.reduce((acc, a) => acc + a.calorias, 0);
+    totalCaloriasCell.textContent = total.toFixed(1);
+  }
+
+  let searchTimeout = null;
+  searchFoodInput.addEventListener('input', () => {
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(() => {
+      buscarAlimentos(searchFoodInput.value.trim());
+    }, 500);
+  });
+</script>
+
+<style>
+  .search-results {
+    border: 1px solid #ccc;
+    max-height: 300px;
+    overflow-y: auto;
+    margin: 5px 0 15px 0;
+    background: #f9f9f9;
+  }
+  .search-result-item {
+    padding: 8px;
+    cursor: pointer;
+    border-bottom: 1px solid #ddd;
+    color: #27ae60;
+    font-family: 'Poppins', sans-serif;
+  }
+  .search-result-item:hover,
+  .search-result-item:focus {
+    background-color: #d4efdf;
+    outline: none;
+  }
+</style>
